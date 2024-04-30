@@ -165,7 +165,7 @@ function DiscountAmountScreen(){
                                 </ImageBackground>
                             </View>
                         </View>
-                       
+                       {item !== 'Employee' &&
                         <View style={{ marginLeft:15, width: '93%', marginBottom: 100,alignSelf:'center' }}>
                             <Text style={{ color: 'rgba(13, 20, 34, 1)', fontSize: 14, fontFamily: 'PlusJakartaSans-SemiBold', marginTop: 10, marginLeft: 7, marginBottom: 10 }}>Managing Director
                                 <Text style={{ color: 'red' }}> {'*'}</Text>
@@ -192,7 +192,9 @@ function DiscountAmountScreen(){
                             {
                                 directorError && <Text style={{color:'red', fontSize:13,fontFamily:'PlusJakartaSans-Medium',margin:10}}>Please select Managing Director</Text>
                             }
-                        </View></>
+                        </View>
+                        }
+                        </>
                     )
                 }
             </ScrollView>

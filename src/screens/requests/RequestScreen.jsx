@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View ,Pressable,StyleSheet, TextInput, FlatList, Image} from "react-native";
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Dropdown } from "react-native-element-dropdown";
+import { SelectCountry } from 'react-native-element-dropdown';
 import Modal from 'react-native-modal';
 import { useAppContext } from "../../context/AppContext";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -89,15 +89,16 @@ function RequestScreen(){
         }
     ]
     const genderOptions = [
-      { label: 'All Status', value: '1' },
-      { label: 'Approved', value: '2' },
-      { label: 'Pending', value: '3' },
-      { label: 'Rejected', value: '4' },
+      { label: 'All Status', value: '1', image : require('../../assets/images/all_status.png')},
+      { label: 'Approved', value: '2', image: require('../../assets/images/accepted.png') },
+      { label: 'Pending', value: '3',image: require('../../assets/images/pending.png') },
+      { label: 'Rejected', value: '4', image: require('../../assets/images/rejected.png') },
       // { label: 'Pending', value: '3' }
     ];
     const [selectedFilter, setSelectedFilter] = useState(filterTitle[0]);
     const [selectedstatus, setSelectedStatus] = useState();
     const [selected, setSelected] = useState(genderOptions[0]);
+    const [status, setStatus] = useState('1')
     const[searchText, setSearchText] = useState();
     const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
     const [selectedType, setSelectedType] = useState('');
@@ -142,6 +143,7 @@ function RequestScreen(){
         getDiscount(item.title,selected.label);
     };
     const handleSelect = (value) => {
+      setStatus(value?.value)
       setSelected(value);
       getDiscount(selectedFilter.title,value.label);
     };
@@ -177,7 +179,7 @@ function RequestScreen(){
           </View>
           <View style={{backgroundColor:'rgba(239, 243, 249, 1)',height:75, width:'90%', alignSelf:'center',marginTop:5,borderRadius:4, flexDirection:'row'}}>
             <View>
-              <Text style={{color:'rgba(13, 20, 34, 1)', fontFamily:'PlusJakartaSans-Bold', fontSize:13,marginLeft:10,textAlign:'left',marginTop:15}}>{item?.discount}  Discount</Text>
+              <Text style={{color:'rgba(13, 20, 34, 1)', fontFamily:'PlusJakartaSans-Bold', fontSize:13,marginLeft:10,textAlign:'left',marginTop:15}}>{item?.percentage ? item?.percentage :0 }%  Discount</Text>
               <Text style={{color:'rgba(11, 160, 220, 1)', fontFamily:'PlusJakartaSans-Bold', fontSize:18,marginLeft:10,textAlign:'left'}}>Rs. {item?.final_amount} /-</Text>
            </View>
            <Image style={{marginLeft:'auto'}} source={require('../../assets/images/green.png')}></Image>
@@ -251,7 +253,7 @@ function RequestScreen(){
                       style={{color:'black', width:'80%',marginLeft:5, fontSize:14, fontFamily:'PlusJakartaSans-Regular'}}></TextInput>
                     <Icon name={'search'} size={30} color="rgba(62, 70, 89, 1)" />
                   </View>
-                  <Dropdown
+                  <SelectCountry
                     style={styles.dropdown}
                     placeholderStyle={styles.placeholderStyle}
                     selectedTextStyle={[styles.selectedTextStyle]}
@@ -259,12 +261,14 @@ function RequestScreen(){
                     // iconColor= {disable ? GlobalColors.iconActive : GlobalColors.iconUnActive } 
                     data={genderOptions}
                     maxHeight={300}
+                    imageStyle={styles.imageStyle}
                     // activeColor={selectedValue ? GlobalColors.activeColor : undefined}
                     itemTextStyle={styles.itemTextStyle}
                     placeholder='Select'
-                    value={selected}
+                    value={status}
                     labelField='label'
                     valueField='value'
+                    imageField="image"
                     // onFocus={() => setIsFocus(true)}
                     // onBlur={() => setIsFocus(false)}
                     onChange={handleSelect}
@@ -409,6 +413,11 @@ const styles = StyleSheet.create({
       marginLeft:10,
       textAlign:'left'
   },
+  imageStyle: {
+    width: 24,
+    height: 24,
+    // backgroundColor:'red'
+  },
   iconStyle: {
       width: 30,
       height: 30,
@@ -417,7 +426,7 @@ const styles = StyleSheet.create({
   itemTextStyle: {
       color: 'black',
       fontSize: 15,
-      marginTop:-10 
+      marginTop:-10 ,
   },
   filterContainer: {
     // width:'35%',

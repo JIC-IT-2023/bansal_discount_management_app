@@ -118,7 +118,7 @@ function RequestExpandScreen(){
                 </Pressable>
                 <View>
                     <View style={{flexDirection:'row'}}>
-                        <Text style={{color:'rgba(13, 20, 34, 1)',fontSize:20,fontFamily:'PlusJakartaSans-SemiBold',marginLeft:15,bottom:10}}>{requestItem?.request_id}</Text>
+                        <Text style={{color:'rgba(13, 20, 34, 1)',fontSize:20,fontFamily:'PlusJakartaSans-SemiBold',marginLeft:15,bottom:10}}>{requestItem?.bill_details?.data?.bill_no}</Text>
                         <Text style={{color:'rgba(120, 126, 139, 1)',fontSize:13,fontFamily:'PlusJakartaSans-SemiBold',marginLeft:10,bottom:2}}>{moment(requestItem?.discharge_date).format('DD MMM YYYY')}</Text>
                     </View>
                     <View style={{flexDirection:'row',marginLeft:17}}>
@@ -143,12 +143,14 @@ function RequestExpandScreen(){
                 {
                   requestItem?.status === 'Pending' && (
                     <View style={{flexDirection:'row',marginTop:Platform.OS === 'ios' ? 30 : 30,height:30, width:'90%',alignItems:'center', justifyContent:'space-evenly',alignSelf:'center'}}>
-                      <Pressable style={{backgroundColor:'rgba(248, 226, 226, 1)', width:'50%', height:52, borderRadius:10,alignItems:'center',justifyContent:'center', borderColor:'rgba(239, 243, 249, 1)', borderWidth:1.5}}>
+                      <Pressable style={{backgroundColor:'rgba(248, 226, 226, 1)', width:requestItem?.relation_type === 'Employee' ? '97%' : '50%', height:52, borderRadius:10,alignItems:'center',justifyContent:'center', borderColor:'rgba(239, 243, 249, 1)', borderWidth:1.5}}>
                         <Text style={{color:'rgba(137, 11, 11, 1)', fontSize:14,fontFamily:'PlusJakartaSans-Medium'}}>Cancel Request</Text>
                       </Pressable>
-                      <Pressable style={{backgroundColor:'rgba(231, 246, 252, 1)', width:'50%', height:52, borderRadius:10,alignItems:'center',justifyContent:'center', marginLeft:10}} onPress={() => continueHandler()}>
-                        <Text style={{color:'rgba(12, 97, 134, 1)', fontSize:14,fontFamily:'PlusJakartaSans-Medium'}}>Change MD</Text>
-                      </Pressable>
+                      {requestItem?.relation_type !== 'Employee' &&  
+                        <Pressable style={{backgroundColor:'rgba(231, 246, 252, 1)', width:'50%', height:52, borderRadius:10,alignItems:'center',justifyContent:'center', marginLeft:10}} onPress={() => continueHandler()}>
+                          <Text style={{color:'rgba(12, 97, 134, 1)', fontSize:14,fontFamily:'PlusJakartaSans-Medium'}}>Change MD</Text>
+                        </Pressable>
+                      }
                     </View>
                   )
                 }
@@ -204,23 +206,23 @@ function RequestExpandScreen(){
                   </View>
                   <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 9, justifyContent: 'space-between' }}>
                       <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Initiated By:</Text>
-                      <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 10 }}>Vikas Tiwari</Text>
+                      <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 10 }}>{requestItem?.initiated_by?.name}</Text>
                   </View>
                   <View style={{ flexDirection: 'row', marginLeft: 10, marginTop: 9, justifyContent: 'space-between',marginBottom:7 }}>
                       <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Approval Authority:</Text>
-                      <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 10 }}>Vishwas Patel</Text>
+                      <Text style={{ color: 'rgba(255, 255, 255, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 10 }}>{requestItem?.approve_authority?.name}</Text>
                   </View>
                 </View>
             </View>
             <View style={{ marginTop: 15, backgroundColor: 'rgba(255, 255, 255, 1)', width: '93%', height: 'auto', borderRadius: 10, padding: 10, alignSelf: 'center', borderColor: 'rgba(239, 243, 249, 1)', borderWidth: 1 }}>
                 <View>
                     <View style={{ flexDirection: 'row', marginLeft: 20, justifyContent: 'space-between' }}>
-                        <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Original Amount:</Text>
-                        <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 20 }}>Rs 50,000 /-</Text>
+                        <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Total Unpaid Amount:</Text>
+                        <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 20 }}>Rs {requestItem?.bill_amount} /-</Text>
                     </View>
                     <View style={{ flexDirection: 'row', marginLeft: 20, marginTop: 5, justifyContent: 'space-between' }}>
-                        <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Discount:(50%)</Text>
-                        <Text style={{ color: 'rgba(40, 161, 56, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 20 }}>Rs 12,500 /-</Text>
+                        <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Discount:({requestItem?.percentage ? requestItem?.percentage : 0}%)</Text>
+                        <Text style={{ color: 'rgba(40, 161, 56, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium', right: 20 }}>Rs {requestItem?.discount_amount} /-</Text>
                     </View>
                 </View>
                 <View style={styles.discountContainer}>
@@ -228,28 +230,28 @@ function RequestExpandScreen(){
                         <Image style={styles.discountIcon} source={require('../../assets/images/discount_green.png')} />
                         <View style={styles.discountText}>
                             <Text style={styles.discountTitle}>Total After Discount</Text>
-                            <Text style={styles.discountNumber}>Rs 50,000 /-</Text>
+                            <Text style={styles.discountNumber}>Rs {requestItem?.final_amount} /-</Text>
                         </View>        
                     </ImageBackground>
                 </View>
             </View>
-            <View style={{ marginTop: 15, backgroundColor: 'rgba(255, 255, 255, 1)', width: '93%', height: 'auto', borderRadius: 10, padding: 10, alignSelf: 'center', borderColor: 'rgba(239, 243, 249, 1)', borderWidth: 1 }}>
+            <View style={{ marginTop: 15, backgroundColor: 'rgba(255, 255, 255, 1)', width: '93%', height: 'auto', borderRadius: 10, padding: 10, alignSelf: 'center', borderColor: 'rgba(239, 243, 249, 1)', borderWidth: 1,marginBottom:110 }}>
                     <View>
                         <View style={{ marginLeft: 10, justifyContent: 'space-between' }}>
                             <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Tentative Discharge Date:</Text>
-                            <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium',marginTop:2}}>12 JAN, 2024</Text>
+                            <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium',marginTop:2}}>{moment(requestItem?.discharge_date).format('DD MMM YYYY')}</Text>
                         </View>
                         <View style={{ marginLeft: 10, marginTop: 5, justifyContent: 'space-between' }}>
                             <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Referred By:</Text>
-                            <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium',marginTop:2 }}>Rahul Choudhary</Text>
+                            <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium',marginTop:2 }}>{requestItem?.referred_by}</Text>
                         </View>
                         <View style={{ marginLeft: 10, marginTop: 5, justifyContent: 'space-between' ,marginBottom:7}}>
                             <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Treatment Description:</Text>
-                            <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium',marginTop:2 }}>Routine check-up</Text>
+                            <Text style={{ color: 'rgba(33, 39, 53, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Medium',marginTop:2 }}>{requestItem?.treatment_description}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={{ marginTop: 15, backgroundColor: 'rgba(255, 255, 255, 1)', width: '93%', height: 'auto', borderRadius: 10, padding: 10, alignSelf: 'center', borderColor: 'rgba(239, 243, 249, 1)', borderWidth: 1,marginBottom:110 }}>
+                {/* <View style={{ marginTop: 15, backgroundColor: 'rgba(255, 255, 255, 1)', width: '93%', height: 'auto', borderRadius: 10, padding: 10, alignSelf: 'center', borderColor: 'rgba(239, 243, 249, 1)', borderWidth: 1,marginBottom:110 }}>
                     <View>
                         <View style={{ marginLeft: 10, justifyContent: 'space-between' }}>
                             <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 13, fontFamily: 'PlusJakartaSans-Regular' }}>Total Paid Amount to Date </Text>
@@ -257,7 +259,7 @@ function RequestExpandScreen(){
                             <Text style={{ color: 'rgba(120, 126, 139, 1)', fontSize: 10, fontFamily: 'PlusJakartaSans-SemiBold',marginTop:5 }}>04 OCT, 2023</Text>
                         </View>
                     </View>
-                </View>
+                </View> */}
            </ScrollView>
            {
             requestItem?.status === 'Pending' && (
